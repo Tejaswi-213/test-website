@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello World App</title>
+    <style>
+        /* CSS starts here */
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Make sure the body takes at least the full viewport height */
+            margin: 0;
+            background-color: #f0f2f5; /* Light grey background */
+        }
+
+        .container {
+            background-color: #ffffff; /* White background for the container */
+            padding: 40px 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Soft shadow */
+            text-align: center;
+        }
+
+        h1 {
+            color: #333; /* Dark grey text */
+            font-size: 3em; /* Larger font size */
+            margin-bottom: 20px;
+            letter-spacing: 2px; /* A bit of spacing between letters */
+            text-transform: uppercase; /* All caps */
+        }
+
+        p {
+            color: #666; /* Medium grey text */
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+
+        /* Basic hover effect for fun (not directly visible in "Hello World" but good practice) */
+        .container:hover {
+            transform: translateY(-5px); /* Lift slightly on hover */
+            transition: transform 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hello, World!</h1>
+        <p>This is a super simple web application with just HTML and CSS.</p>
+    </div>
+</body>
+</html>
