@@ -1,14 +1,16 @@
+let deck = [];
+let playerHand = [];
+let dealerHand = [];
+let playerScore = 0;
+let dealerScore = 0;
+let gameOver = false;
+
 const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
 const ranks = ['Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King', 'Ace'];
 const values = {
   'Two': 2, 'Three': 3, 'Four': 4, 'Five': 5, 'Six': 6, 'Seven': 7, 'Eight': 8, 'Nine': 9,
   'Ten': 10, 'Jack': 10, 'Queen': 10, 'King': 10, 'Ace': 11
 };
-
-let deck = [];
-let player 0;
-let dealerScore = 0;
-let gameOver = false;
 
 function createDeck() {
   deck = [];
@@ -22,9 +24,7 @@ function createDeck() {
 function shuffleDeck() {
   for (let i = deck.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [deck[i], deck[j]] = [deck[j], deck[i]];
-  }
-}
+    [deck[i}
 
 function dealCard(hand) {
   const card = deck.pop();
