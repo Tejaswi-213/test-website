@@ -1,86 +1,74 @@
 import random
 
-suits = ('Hearts','Diamonds','Clubs','Spades')
-
-ranks = ('Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Jack','Queen','King','Ace')
-
-values = {'Two':2,'Three':3,'Four':4,'Five':5,'Six':6,'Seven':7,'Eight':8,'Nine':9,'Ten':10,'Jack':10,'Queen':10,'King':10,'Ace':11}
+suits = ('Hearts', 'Diamonds', 'Clubs', 'Spades')
+ranks = ('Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King', 'Ace')
+values = {'Two': 2, 'Three': 3, 'Four': 4, 'Five': 5, 'Six': 6, 'Seven': 7, 'Eight': 8, 'Nine': 9,
+          'Ten': 10, 'Jack': 10, 'Queen': 10, 'King': 10, 'Ace': 11}
 
 playing = True
 
-
-class Card():
-    def __init__(self,suit,rank):
-        self.suit= suit
+class Card:
+    def __init__(self, suit, rank):
+        self.suit = suit
         self.rank = rank
-    def __str__(self):
-        return self.rank + ' of ' + self.suit
 
-class Deck():
+    def __str__(self):
+        return f'{self.rank} of {self.suit}'
+
+class Deck:
     def __init__(self):
-        self.deck = []
-        for suit in suits:
-            for rank in ranks:
-                self.deck.append(Card(suit,rank))
+        self.deck = [Card(suit, rank) for suit in suits for rank in ranks]
 
     def __str__(self):
-        deck_comp = ''
-        for card in self.deck:
-            deck_comp += '\n' + Card.__str__
-        return 'The deck has:'+deck_comp
-    
+        return 'The deck has:' + ''.join(f'\n{str(card)}' for card in self.deck)
+
     def shuffle(self):
         random.shuffle(self.deck)
 
     def deal(self):
-        single_card = self.deck.pop()
-        return single_card
+        return self.deck.pop()
 
-class Hand():
+class Hand:
     def __init__(self):
-        self.card = []
+        self.cards = []
         self.value = 0
         self.aces = 0
 
-    def add_card(self,card):
-        self.card.append(card)
-        self.value+=values[card.rank]
-
-        if card.rank =='Ace':
-            self.aces +=1
+    def add_card(self, card):
+        self.cards.append(card)
+        self.value += values[card.rank]
+        if card.rank == 'Ace':
+            self.aces += 1
 
     def adjust_for_aces(self):
         while self.value > 21 and self.aces:
-            self.value -=10
-            self.aces -=1
+            self.value -= 10
+            self.aces -= 1
 
-class chips():
+class Chips:
     def __init__(self):
         self.total = 100
         self.bet = 0
-    def win_bet(self):
-        self.total +=self.bet
-    def lose_bet(self):
-        self.total -=self.bet
 
+    def win_bet(self):
+        self.total += self.bet
+
+    def lose_bet(self):
+        self.total -= self.bet
 
 def take_bet(chips):
-
     while True:
         try:
-            chips.bet = int(input('Please enter your bet:'))
+            chips.bet = int(input('Please enter your bet: '))
         except ValueError:
             print('Please choose an integer value!')
-            continue
         else:
             if chips.bet > chips.total:
                 print('You do not have enough funds.')
             else:
                 break
 
-
-def hit(deck,hand):
-
+def hit(deck, hand):
     hand.add_card(deck.deal())
     hand.adjust_for_aces()
 
@@ -103,46 +91,42 @@ def hit_or_stand(deck, hand):
             continue
         break
 
-def show_some(player,dealer):
+def show_some(player, dealer):
+    print("\nDealer's Hand: One card hidden,", dealer.cards[1])
+    print("Player's Hand:", *player.cards, f"Value: {player.value}")
 
-    print("\n Dealer's Hand: One card Hidden,",dealer.card[1])
-    # print('\n  Dealers Hand:')
-    # print('\n One card hidden')
-    # print('\n ',dealer.card[1])
-    print("\n Player's Hand:", *player.card,player.value , sep=' ')
+def show_all(player, dealer):
+    print("\nDealer's Hand:", *dealer.cards, f"Value: {dealer.value}")
+    print("Player's Hand:", *player.cards, f"Value: {player.value}")
 
-def show_all(player,dealer):
-    print("\n Deale's Hand:",*dealer.card,sep=' ')
-    print("\n Dealer's Hand:",dealer.value)
-    print("\n player's Hand:",*player.card,sep =' ')
-    print("\n Player's Hand:",player.value)
-
-def player_bust(player,dealer,chips):
-    print('\n Player Bust!')
+def player_bust(player, dealer, chips):
+    print('\nPlayer busts!')
     chips.lose_bet()
 
-def player_win(player,dealer,chips):
-    print('\n Player win!')
+def player_win(player, dealer, chips):
+    print('\nPlayer wins!')
     chips.win_bet()
 
-def dealer_bust(player,dealer,chips):
-    print('\n Dealer Bust')
+def dealer_bust(player, dealer, chips):
+    print('\nDealer busts!')
     chips.win_bet()
 
-def dealer_win(player,dealer,chips):
-    print('\n Dealer win!')
+def dealer_win(player, dealer, chips):
+    print('\nDealer wins!')
     chips.lose_bet()
 
-def push(player,dealer):
-    print('Player and Dealer in TIE. Its PUSH')
-    
+def push(player, dealer):
+    print('Player and Dealer tie. It\'s a push!')
+
+# Game loop
 while True:
+    print("Welcome to Blackjack!")
 
-    print("Welcome to the Black-Jack_Game")
-    
+    # Create and shuffle deck
     deck = Deck()
     deck.shuffle()
 
+    # Deal cards
     player_hand = Hand()
     player_hand.add_card(deck.deal())
     player_hand.add_card(deck.deal())
@@ -151,41 +135,40 @@ while True:
     dealer_hand.add_card(deck.deal())
     dealer_hand.add_card(deck.deal())
 
-    player_chips = chips()
+    # Set up player's chips
+    player_chips = Chips()
 
+    # Take bet
     take_bet(player_chips)
 
-    show_some(player_hand,dealer_hand)
+    # Show cards
+    show_some(player_hand, dealer_hand)
 
+    playing = True
     while playing:
-
-        hit_or_stand(deck,player_hand)
-        show_some(player_hand,dealer_hand)
+        hit_or_stand(deck, player_hand)
+        show_some(player_hand, dealer_hand)
         if player_hand.value > 21:
-            player_bust(player_hand,dealer_hand,player_chips)
+            player_bust(player_hand, dealer_hand, player_chips)
             break
+
     if player_hand.value <= 21:
-        while dealer_hand.value <17:
-            hit(deck,dealer_hand)
-        show_all(player_hand,dealer_hand)
+        while dealer_hand.value < 17:
+            hit(deck, dealer_hand)
+        show_all(player_hand, dealer_hand)
 
         if dealer_hand.value > 21:
-             dealer_bust(player_hand,dealer_hand,player_chips)
-        elif player_hand.value < dealer_hand.value:
-            dealer_win(player_hand,dealer_hand,player_chips)
-        elif player_hand.value > dealer_hand.value:
-            player_win(player_hand,dealer_hand,player_chips)
+            dealer_bust(player_hand, dealer_hand, player_chips)
+        elif dealer_hand.value > player_hand.value:
+            dealer_win(player_hand, dealer_hand, player_chips)
+        elif dealer_hand.value < player_hand.value:
+            player_win(player_hand, dealer_hand, player_chips)
         else:
-            push(player_hand,dealer_hand)
+            push(player_hand, dealer_hand)
 
-    print("\n Player's winnings stand at",player_chips.total)
-    
-    new_game = input('\n Would you like to start again? y or n')
+    print(f"\nPlayer's total chips: {player_chips.total}")
 
-    if new_game[0].lower() == 'y':
-        playing = True
-        continue
-    else:
-        print('Thank you!')
-        playing = False       
+    new_game = input('\nWould you like to play again? (y/n): ')
+    if new_game[0].lower() != 'y':
+        print('Thanks for playing!')
         break
