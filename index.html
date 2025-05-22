@@ -1,54 +1,191 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World App</title>
-    <style>
-        /* CSS starts here */
-        body {
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh; /* Make sure the body takes at least the full viewport height */
-            margin: 0;
-            background-color: #f0f2f5; /* Light grey background */
-        }
+import random
 
-        .container {
-            background-color: #ffffff; /* White background for the container */
-            padding: 40px 60px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Soft shadow */
-            text-align: center;
-        }
+suits = ('Hearts','Diamonds','Clubs','Spades')
 
-        h1 {
-            color: #333; /* Dark grey text */
-            font-size: 3em; /* Larger font size */
-            margin-bottom: 20px;
-            letter-spacing: 2px; /* A bit of spacing between letters */
-            text-transform: uppercase; /* All caps */
-        }
+ranks = ('Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Jack','Queen','King','Ace')
 
-        p {
-            color: #666; /* Medium grey text */
-            font-size: 1.2em;
-            line-height: 1.6;
-        }
+values = {'Two':2,'Three':3,'Four':4,'Five':5,'Six':6,'Seven':7,'Eight':8,'Nine':9,'Ten':10,'Jack':10,'Queen':10,'King':10,'Ace':11}
 
-        /* Basic hover effect for fun (not directly visible in "Hello World" but good practice) */
-        .container:hover {
-            transform: translateY(-5px); /* Lift slightly on hover */
-            transition: transform 0.3s ease-in-out;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Hello, World!</h1>
-        <p>This is a super simple web application with just HTML and CSS.</p>
-    </div>
-</body>
-</html>
+playing = True
+
+
+class Card():
+    def __init__(self,suit,rank):
+        self.suit= suit
+        self.rank = rank
+    def __str__(self):
+        return self.rank + ' of ' + self.suit
+
+class Deck():
+    def __init__(self):
+        self.deck = []
+        for suit in suits:
+            for rank in ranks:
+                self.deck.append(Card(suit,rank))
+
+    def __str__(self):
+        deck_comp = ''
+        for card in self.deck:
+            deck_comp += '\n' + Card.__str__
+        return 'The deck has:'+deck_comp
+    
+    def shuffle(self):
+        random.shuffle(self.deck)
+
+    def deal(self):
+        single_card = self.deck.pop()
+        return single_card
+
+class Hand():
+    def __init__(self):
+        self.card = []
+        self.value = 0
+        self.aces = 0
+
+    def add_card(self,card):
+        self.card.append(card)
+        self.value+=values[card.rank]
+
+        if card.rank =='Ace':
+            self.aces +=1
+
+    def adjust_for_aces(self):
+        while self.value > 21 and self.aces:
+            self.value -=10
+            self.aces -=1
+
+class chips():
+    def __init__(self):
+        self.total = 100
+        self.bet = 0
+    def win_bet(self):
+        self.total +=self.bet
+    def lose_bet(self):
+        self.total -=self.bet
+
+
+def take_bet(chips):
+
+    while True:
+        try:
+            chips.bet = int(input('Please enter your bet:'))
+        except ValueError:
+            print('Please choose an integer value!')
+            continue
+        else:
+            if chips.bet > chips.total:
+                print('You do not have enough funds.')
+            else:
+                break
+
+
+def hit(deck,hand):
+
+    hand.add_card(deck.deal())
+    hand.adjust_for_aces()
+
+def hit_or_stand(deck, hand):
+    global playing
+    while True:
+        x = input('\nWould you like to Hit or Stand? Please select h or s: ')
+        if x[0].lower() == 'h':
+            hit(deck, hand)
+            if hand.value == 21:
+                print("Player has 21! Standing automatically.")
+                playing = False
+            elif hand.value > 21:
+                playing = False
+        elif x[0].lower() == 's':
+            print("Player stands. Dealer's turn.")
+            playing = False
+        else:
+            print("Invalid input. Please enter 'h' or 's'.")
+            continue
+        break
+
+def show_some(player,dealer):
+
+    print("\n Dealer's Hand: One card Hidden,",dealer.card[1])
+    # print('\n  Dealers Hand:')
+    # print('\n One card hidden')
+    # print('\n ',dealer.card[1])
+    print("\n Player's Hand:", *player.card,player.value , sep=' ')
+
+def show_all(player,dealer):
+    print("\n Deale's Hand:",*dealer.card,sep=' ')
+    print("\n Dealer's Hand:",dealer.value)
+    print("\n player's Hand:",*player.card,sep =' ')
+    print("\n Player's Hand:",player.value)
+
+def player_bust(player,dealer,chips):
+    print('\n Player Bust!')
+    chips.lose_bet()
+
+def player_win(player,dealer,chips):
+    print('\n Player win!')
+    chips.win_bet()
+
+def dealer_bust(player,dealer,chips):
+    print('\n Dealer Bust')
+    chips.win_bet()
+
+def dealer_win(player,dealer,chips):
+    print('\n Dealer win!')
+    chips.lose_bet()
+
+def push(player,dealer):
+    print('Player and Dealer in TIE. Its PUSH')
+    
+while True:
+
+    print("Welcome to the Black-Jack_Game")
+    
+    deck = Deck()
+    deck.shuffle()
+
+    player_hand = Hand()
+    player_hand.add_card(deck.deal())
+    player_hand.add_card(deck.deal())
+
+    dealer_hand = Hand()
+    dealer_hand.add_card(deck.deal())
+    dealer_hand.add_card(deck.deal())
+
+    player_chips = chips()
+
+    take_bet(player_chips)
+
+    show_some(player_hand,dealer_hand)
+
+    while playing:
+
+        hit_or_stand(deck,player_hand)
+        show_some(player_hand,dealer_hand)
+        if player_hand.value > 21:
+            player_bust(player_hand,dealer_hand,player_chips)
+            break
+    if player_hand.value <= 21:
+        while dealer_hand.value <17:
+            hit(deck,dealer_hand)
+        show_all(player_hand,dealer_hand)
+
+        if dealer_hand.value > 21:
+             dealer_bust(player_hand,dealer_hand,player_chips)
+        elif player_hand.value < dealer_hand.value:
+            dealer_win(player_hand,dealer_hand,player_chips)
+        elif player_hand.value > dealer_hand.value:
+            player_win(player_hand,dealer_hand,player_chips)
+        else:
+            push(player_hand,dealer_hand)
+
+    print("\n Player's winnings stand at",player_chips.total)
+    
+    new_game = input('\n Would you like to start again? y or n')
+
+    if new_game[0].lower() == 'y':
+        playing = True
+        continue
+    else:
+        print('Thank you!')
+        playing = False       
+        break
