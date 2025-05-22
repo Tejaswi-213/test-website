@@ -23,8 +23,10 @@ function createDeck() {
 
 function shuffleDeck() {
   for (let i = deck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [deck[i}
+   .random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+}
 
 function dealCard(hand) {
   const card = deck.pop();
@@ -56,8 +58,8 @@ function displayHands() {
 function startGame() {
   createDeck();
   shuffleDeck();
-  playerHand = [dealCard(deck), dealCard(deck)];
-  dealerHand = [dealCard(deck), dealCard(deck)];
+  playerHand = [dealCard(playerHand), dealCard(playerHand)];
+  dealerHand = [dealCard(dealerHand), dealCard(dealerHand)];
   playerScore = calculateScore(playerHand);
   dealerScore = calculateScore(dealerHand);
   gameOver = false;
